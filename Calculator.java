@@ -139,7 +139,7 @@ public class Calculator implements ActionListener {
 
 	//	Solve ^
 	public String exponential(String expression){
-		String[] temp = expression.split("r");
+		String[] temp = expression.split("\\^");
 		
 		double[] nums = new double[2];
 		nums[0] = Double.parseDouble(temp[0]); // value to take root of
@@ -180,7 +180,19 @@ public class Calculator implements ActionListener {
 			
 		}
 	//	Solve / 
+	public String divide(String expression){
+		String[] temp = expression.split("\\/");
+		String result;
+		double[] nums = new double[2];
+		
+		nums[0] = Double.parseDouble(temp[0]);
+		nums[1] = Double.parseDouble(temp[1]);
+		double dividend = nums[0] / nums[1];
 
+		return Double.toString(dividend);
+		
+	}
+		
 	//	Solve + (Jeremy)
 	public static String Add(String expression){
 		String[] temp = expression.split("\\+");
