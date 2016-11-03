@@ -141,13 +141,13 @@ public class Calculator implements ActionListener {
 		public String Multiply(String expression){
 			String[] temp = expression.split("\\*");
 			String result;
-			int[] nums = new int[2];
-			int product;
+			double[] nums = new double[2];
+			double product;
 			
-			nums[0] = Integer.parseInt(temp[0]);
-			nums[1] = Integer.parseInt(temp[1]);
+			nums[0] = Double.parseDouble(temp[0]);
+			nums[1] = Double.parseDouble(temp[1]);
 			product = nums[0] * nums[1];
-			result = Integer.toString(product);
+			result = Double.toString(product);
 			
 			return result;
 			
@@ -158,13 +158,13 @@ public class Calculator implements ActionListener {
 	public static String Add(String expression){
 		String[] temp = expression.split("\\+");
 		String result;
-		int[] nums = new int[2];
-		int sum;
+		double[] nums = new double[2];
+		double sum;
 		
-		nums[0] = Integer.parseInt(temp[0]);
-		nums[1] = Integer.parseInt(temp[1]);
+		nums[0] = Double.parseDouble(temp[0]);
+		nums[1] = Double.parseDouble(temp[1]);
 		sum = nums[0] + nums[1];
-		result = Integer.toString(sum);
+		result = Double.toString(sum);
 		
 		return result;
 	}
