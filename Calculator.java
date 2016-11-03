@@ -136,7 +136,19 @@ public class Calculator implements ActionListener {
 	//	Solve ^
 
 	//	Solve r
-
+	public String root(String expression){
+		String[] temp = expression.split("r");
+		
+		double[] nums = new double[2];
+		nums[0] = Double.parseDouble(temp[0]); // value to take root of
+		nums[1] = Double.parseDouble(temp[1]); // nth root
+		
+		double exponential = 1/nums[1];
+		double rootValue = Math.pow(nums[0], exponential);
+		return Double.toString(rootValue);
+		
+	}
+	
 	//	Solve *
 		public String Multiply(String expression){
 			String[] temp = expression.split("\\*");
