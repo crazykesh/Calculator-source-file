@@ -96,6 +96,8 @@ public class Calculator implements ActionListener {
 		
 		errorField.setText("");
 		
+		// Testing Simple Functions
+		
 		expression = variableSubstitution(expression, variable);
 		System.out.println("Your expression: " + expression);
 		
@@ -134,7 +136,18 @@ public class Calculator implements ActionListener {
 	//	find ()
 
 	//	Solve ^
-
+	public String exponential(String expression){
+		String[] temp = expression.split("r");
+		
+		double[] nums = new double[2];
+		nums[0] = Double.parseDouble(temp[0]); // value to take root of
+		nums[1] = Double.parseDouble(temp[1]); // nth root
+		
+		double rootValue = Math.pow(nums[0], nums[1]);
+		
+		return Double.toString(rootValue);
+	}
+	
 	//	Solve r
 	public String root(String expression){
 		String[] temp = expression.split("r");
@@ -145,8 +158,8 @@ public class Calculator implements ActionListener {
 		
 		double exponential = 1/nums[1];
 		double rootValue = Math.pow(nums[0], exponential);
-		return Double.toString(rootValue);
 		
+		return Double.toString(rootValue);
 	}
 	
 	//	Solve *
