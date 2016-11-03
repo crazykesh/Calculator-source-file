@@ -100,7 +100,10 @@ public class Calculator implements ActionListener {
 		System.out.println("Your expression: " + expression);
 		
 		if(expression.contains("+")){
-			logAreaField.setText(Add(expression));
+			logAreaField.setText(expression + " = " + Add(expression));
+		}
+		else if(expression.contains("*")){
+			logAreaField.setText(expression + " = " + Multiply(expression));
 		}
 	}
 	
@@ -135,8 +138,18 @@ public class Calculator implements ActionListener {
 	//	Solve r
 
 	//	Solve *
-		public String multiply(String nugget){
-			return nugget;
+		public String Multiply(String expression){
+			String[] temp = expression.split("\\*");
+			String result;
+			int[] nums = new int[2];
+			int product;
+			
+			nums[0] = Integer.parseInt(temp[0]);
+			nums[1] = Integer.parseInt(temp[1]);
+			product = nums[0] * nums[1];
+			result = Integer.toString(product);
+			
+			return result;
 			
 		}
 	//	Solve / 
