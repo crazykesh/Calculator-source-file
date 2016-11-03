@@ -197,7 +197,20 @@ public class Calculator implements ActionListener {
 	}
 
 	//	Solve -
-
+	public static String Minus(String expression){
+		String[] temp = expression.split("\\-");
+		String result;
+		double[] nums = new double[2];
+		double sum;
+		
+		nums[0] = Double.parseDouble(temp[0]);
+		nums[1] = Double.parseDouble(temp[1]);
+		sum = nums[0] - nums[1];
+		result = Double.toString(sum);
+		
+		return result;
+	}
+	
 	//	Return Boolean - Check there are no more operators
 
 	//	Space replacer
