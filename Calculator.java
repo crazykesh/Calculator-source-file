@@ -6,15 +6,17 @@ import java.awt.event.ActionListener;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 public class Calculator implements ActionListener {
 	
 	private JFrame calcWindow = new JFrame("Calculator");
+	private String newLine = System.lineSeparator(); 
 	private JTextField inputField = new JTextField();
 	private JTextField errorField = new JTextField();
 	private JTextField variableField = new JTextField();
-	private JTextField logAreaField = new JTextField();
+	private JTextArea logAreaField = new JTextArea();
 	private JLabel inputLabel = new JLabel("Input Expression:");
 	private JLabel errorLabel = new JLabel("Error:");
 	private JLabel variableLabel = new JLabel("For x:");
@@ -102,10 +104,10 @@ public class Calculator implements ActionListener {
 		System.out.println("Your expression: " + expression);
 		
 		if(expression.contains("+")){
-			logAreaField.setText(expression + " = " + Add(expression));
+			logAreaField.append(newLine + expression + " = " + Add(expression));
 		}
 		else if(expression.contains("*")){
-			logAreaField.setText(expression + " = " + Multiply(expression));
+			logAreaField.append(newLine + expression + " = " + Multiply(expression));
 		}
 	}
 	
