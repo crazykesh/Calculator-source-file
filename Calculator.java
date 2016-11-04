@@ -2,6 +2,8 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -81,7 +83,8 @@ public class Calculator implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		
-		String expression = inputField.getText().trim();
+		String originalExpression = inputField.getText().trim();
+		String expression = originalExpression.replace(" ", "");
 		String variable = variableField.getText().trim();
 		if ((expression.length() == 0)){
 			System.out.println("You didn't enter an expression");
@@ -101,19 +104,34 @@ public class Calculator implements ActionListener {
 		// Testing Simple Functions
 		
 		expression = variableSubstitution(expression, variable);
+		expression = addUnary(expression);
 		System.out.println("Your expression: " + expression);
 		
 		if(expression.contains("+")){
-			logAreaField.append(newLine + expression + " = " + Add(expression));
+			logAreaField.append(newLine + originalExpression + " = " + Add(expression));
 		}
 		else if(expression.contains("*")){
-			logAreaField.append(newLine + expression + " = " + Multiply(expression));
+			logAreaField.append(newLine + originalExpression + " = " + Multiply(expression));
 		}
-		if(parenthesesCheck(expression)){
-			logAreaField.append(handleParentheses(expression));
+		else if(expression.contains("-")){
+			logAreaField.append(newLine + originalExpression + " = " + Minus(expression));
 		}
-		else{
-			errorField.setText("error");
+		else if(expression.contains("/")){
+			logAreaField.append(newLine + originalExpression + " = " + divide(expression));
+		}
+		else if(expression.contains("r")){
+			logAreaField.append(newLine + originalExpression + " = " + root(expression));
+		}
+		else if(expression.contains("^")){
+			logAreaField.append(newLine + originalExpression + " = " + exponential(expression));
+		}
+		else if (expression.contains("(") || expression.contains(")")){
+			if(parenthesesCheck(expression)){
+				logAreaField.append(handleParentheses(expression));
+			}
+			else{
+				errorField.setText("error");
+			}
 		}
 	}
 	
@@ -136,8 +154,32 @@ public class Calculator implements ActionListener {
 //	+ unary eliminator
 
 	//	- unary -- add n
-
+	public String addUnary(String expression){
+		char [] expressionArray = expression.toCharArray();
+		char temp = expressionArray[0];
+		List<Integer> unaryLocation = new ArrayList<Integer>();
+		
+		for(int i = 1; i < expressionArray.length; i++){
+			if (expressionArray[i] == '-'){
+				if ((temp == '*') || (temp == '/') || (temp == '+') || (temp == '-') || (temp == 'r') || (temp == '^')){
+					unaryLocation.add(i);
+				}
+			}
+			temp = expressionArray[i];
+		}
+		for(Integer j : unaryLocation){
+			expression = expression.substring(0,j) + 'n' + expression.substring(j+1);
+		}
+		return expression;
+	}
+	
 	//	- unary -- replace n
+	public String[] replaceUnary(String [] expression){
+		for (int i = 0; i < expression.length; i++){
+			expression[i] = expression[i].replace('n', '-');
+		}
+		return expression;
+	}
 
 	//	find ()
 	public String handleParentheses(String expression){
@@ -152,35 +194,35 @@ public class Calculator implements ActionListener {
 	// validate parentheses
 	public boolean parenthesesCheck(String expression){
 		
-		char [] expressionArray = expression.toCharArray();
-		int leftParenCount = 0, rightParenCount = 0;
-		
-		for(int i = 0; i < expressionArray.length; i++){
-			if (expressionArray[i] == '('){
-				leftParenCount++;
+			char [] expressionArray = expression.toCharArray();
+			int leftParenCount = 0, rightParenCount = 0;
+			
+			for(int i = 0; i < expressionArray.length; i++){
+				if (expressionArray[i] == '('){
+					leftParenCount++;
+				}
+				if (expressionArray[i] == ')'){
+					rightParenCount++;
+				}
 			}
-			if (expressionArray[i] == ')'){
-				rightParenCount++;
+			
+			if (leftParenCount!=rightParenCount){
+				return false;
 			}
-		}
-		
-		if (leftParenCount!=rightParenCount){
-			return false;
-		}
-		if (expression.indexOf('(') > expression.indexOf(')')){
-			return false;
-		}
-		if (expression.lastIndexOf('(') > expression.lastIndexOf(')')){
-			return false;
-		}
-		
-		return true;
+			if (expression.indexOf('(') > expression.indexOf(')')){
+				return false;
+			}
+			if (expression.lastIndexOf('(') > expression.lastIndexOf(')')){
+				return false;
+			}
+			
+			return true;
 	}
 
 	//	Solve ^
 	public String exponential(String expression){
 		String[] temp = expression.split("\\^");
-		
+		temp = replaceUnary(temp);
 		double[] nums = new double[2];
 		nums[0] = Double.parseDouble(temp[0]); // value to take root of
 		nums[1] = Double.parseDouble(temp[1]); // nth root
@@ -193,7 +235,7 @@ public class Calculator implements ActionListener {
 	//	Solve r
 	public String root(String expression){
 		String[] temp = expression.split("r");
-		
+		temp = replaceUnary(temp);
 		double[] nums = new double[2];
 		nums[0] = Double.parseDouble(temp[0]); // value to take root of
 		nums[1] = Double.parseDouble(temp[1]); // nth root
@@ -207,6 +249,7 @@ public class Calculator implements ActionListener {
 	//	Solve *
 		public String Multiply(String expression){
 			String[] temp = expression.split("\\*");
+			temp = replaceUnary(temp);
 			String result;
 			double[] nums = new double[2];
 			double product;
@@ -222,6 +265,7 @@ public class Calculator implements ActionListener {
 	//	Solve / 
 	public String divide(String expression){
 		String[] temp = expression.split("\\/");
+		temp = replaceUnary(temp);
 		double[] nums = new double[2];
 		
 		nums[0] = Double.parseDouble(temp[0]);
@@ -233,8 +277,9 @@ public class Calculator implements ActionListener {
 	}
 		
 	//	Solve + (Jeremy)
-	public static String Add(String expression){
+	public String Add(String expression){
 		String[] temp = expression.split("\\+");
+		temp = replaceUnary(temp);
 		String result;
 		double[] nums = new double[2];
 		double sum;
@@ -248,8 +293,9 @@ public class Calculator implements ActionListener {
 	}
 
 	//	Solve -
-	public static String Minus(String expression){
+	public String Minus(String expression){
 		String[] temp = expression.split("\\-");
+		temp = replaceUnary(temp);
 		String result;
 		double[] nums = new double[2];
 		double sum;
