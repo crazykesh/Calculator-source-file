@@ -109,6 +109,12 @@ public class Calculator implements ActionListener {
 		else if(expression.contains("*")){
 			logAreaField.append(newLine + expression + " = " + Multiply(expression));
 		}
+		if(parenthesesCheck(expression)){
+			logAreaField.append(handleParentheses(expression));
+		}
+		else{
+			errorField.setText("error");
+		}
 	}
 	
 	private String variableSubstitution(String expression, String variable){
@@ -133,9 +139,43 @@ public class Calculator implements ActionListener {
 
 	//	- unary -- replace n
 
-	//	Replace x variable
-
 	//	find ()
+	public String handleParentheses(String expression){
+		
+		int innerParentheses = expression.lastIndexOf('(');
+		String temp = expression.substring(innerParentheses);
+		String innerExpression = temp.substring(1, temp.indexOf(')'));
+		
+		return innerExpression;
+	}
+	
+	// validate parentheses
+	public boolean parenthesesCheck(String expression){
+		
+		char [] expressionArray = expression.toCharArray();
+		int leftParenCount = 0, rightParenCount = 0;
+		
+		for(int i = 0; i < expressionArray.length; i++){
+			if (expressionArray[i] == '('){
+				leftParenCount++;
+			}
+			if (expressionArray[i] == ')'){
+				rightParenCount++;
+			}
+		}
+		
+		if (leftParenCount!=rightParenCount){
+			return false;
+		}
+		if (expression.indexOf('(') > expression.indexOf(')')){
+			return false;
+		}
+		if (expression.lastIndexOf('(') > expression.lastIndexOf(')')){
+			return false;
+		}
+		
+		return true;
+	}
 
 	//	Solve ^
 	public String exponential(String expression){
@@ -182,7 +222,6 @@ public class Calculator implements ActionListener {
 	//	Solve / 
 	public String divide(String expression){
 		String[] temp = expression.split("\\/");
-		String result;
 		double[] nums = new double[2];
 		
 		nums[0] = Double.parseDouble(temp[0]);
