@@ -318,6 +318,19 @@ public class Calculator implements ActionListener {
 	
 	//	Return Boolean - Check there are no more operators
 
+	public boolean checkForOperators(String expression){
+		if(expression.contains("+") || expression.contains("-") || expression.contains("r") 
+		|| expression.contains("^") || expression.contains("*") || expression.contains("/")
+		|| expression.contains("n") || expression.contains("(") || expression.contains(")")
+		|| expression.contains("e") || expression.contains("x") || expression.contains("pi")){
+			return true;
+			
+		} else {
+			return false;
+		}
+	}
+	
+	
 	//	Space replacer
 
 	//	Find end of expression
