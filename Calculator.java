@@ -107,6 +107,14 @@ public class Calculator implements ActionListener {
 		expression = addUnary(expression);
 		System.out.println("Your expression: " + expression);
 		
+		if (expression.contains("(") || expression.contains(")")){
+			if(parenthesesCheck(expression)){
+				logAreaField.append(handleParentheses(expression));
+			}
+			else{
+				errorField.setText("error");
+			}
+		}
 		if(expression.contains("+")){
 			logAreaField.append(newLine + originalExpression + " = " + Add(expression));
 		}
@@ -124,14 +132,6 @@ public class Calculator implements ActionListener {
 		}
 		else if(expression.contains("^")){
 			logAreaField.append(newLine + originalExpression + " = " + exponential(expression));
-		}
-		else if (expression.contains("(") || expression.contains(")")){
-			if(parenthesesCheck(expression)){
-				logAreaField.append(handleParentheses(expression));
-			}
-			else{
-				errorField.setText("error");
-			}
 		}
 	}
 	
@@ -158,6 +158,14 @@ public class Calculator implements ActionListener {
 		char [] expressionArray = expression.toCharArray();
 		char temp = expressionArray[0];
 		List<Integer> unaryLocation = new ArrayList<Integer>();
+		
+		if (temp == '-'){
+			if ((expressionArray[1] != '*') || (expressionArray[1] != '/') || (expressionArray[1] != '+') ||
+					(expressionArray[1] != '-') || (expressionArray[1] != 'r') || (expressionArray[1] != '^') ||
+					(expressionArray[1] != '(') || (expressionArray[1] != ')')){
+				unaryLocation.add(0);
+			}
+		}
 		
 		for(int i = 1; i < expressionArray.length; i++){
 			if (expressionArray[i] == '-'){
