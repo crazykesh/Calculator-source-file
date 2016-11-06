@@ -80,72 +80,67 @@ public class Calculator implements ActionListener {
 	}
 
 	public static void main(String[] args) {
-		
+		System.out.println("ECE 309 - Fall 2016 - Lab 11");
+		System.out.println("Team Members: Jeremy Swafford, Keshav Patel, Jacquelynn Drahuse");
 		new Calculator();
 
 	}
 
 	@Override
-	public void actionPerformed(ActionEvent ae) {
-		
-		String originalExpression = inputField.getText().trim();
-		String expression = originalExpression.replace(" ", "");
-		String variable = variableField.getText().trim();
-		if ((expression.length() == 0)){
-			System.out.println("You didn't enter an expression");
-			errorField.setText("You didn't enter an expression");
-			return;
-		}
-		if (expression.contains("x")){
-			if (variable.length() == 0){
-				System.out.println("You didn't define your x value.");
-				errorField.setText("You didn't define your x value.");
+	public void actionPerformed(ActionEvent ae) {	
+		try {
+			String originalExpression = inputField.getText().trim();
+			String expression = originalExpression.replace(" ", "");
+			String variable = variableField.getText().trim();
+			if ((expression.length() == 0)){
+				System.out.println("You didn't enter an expression");
+				errorField.setText("You didn't enter an expression");
 				return;
 			}
+			if (expression.contains("x")){
+				if (variable.length() == 0){
+					System.out.println("You didn't define your x value.");
+					errorField.setText("You didn't define your x value.");
+					return;
+				}
+			}
+			
+			
+			// Testing Simple Functions
+			
+			expression = variableSubstitution(expression, variable);
+			expression = addUnary(expression);
+			checkForPositiveUnary(expression);
+			System.out.println("Your expression: " + expression);
+			
+			if (expression.contains("(") || expression.contains(")")){
+				if(parenthesesCheck(expression)){
+					logAreaField.append(handleParentheses(expression));
+					expression = handleParentheses(expression);
+				}
+				else{
+					errorField.setText("Missing or invalid parenthesis.");
+				}
+			}
+			
+			
+			
+			
+			
+			expression = complexSolve(expression);
+			logAreaField.append(newLine + originalExpression + " = " + expression);
+			
+		} catch (Exception e) {
+			String message = e.getMessage();
+			errorField.setText(message);
 		}
 		
-		errorField.setText("");
 		
-		// Testing Simple Functions
-		
-		expression = variableSubstitution(expression, variable);
-		expression = addUnary(expression);
-		checkForPositiveUnary(expression);
-		System.out.println("Your expression: " + expression);
-		
-		if (expression.contains("(") || expression.contains(")")){
-			if(parenthesesCheck(expression)){
-				logAreaField.append(handleParentheses(expression));
-				expression = handleParentheses(expression);
-			}
-			else{
-				errorField.setText("error");
-			}
-		}
-		
-		
-		expression = complexSolve(expression);
-		
-		logAreaField.append(newLine + originalExpression + " = " + expression);
-//		if(expression.contains("+")){
-//			logAreaField.append(newLine + originalExpression + " = " + Add(expression));
-//		}
-//		else if(expression.contains("*")){
-//			logAreaField.append(newLine + originalExpression + " = " + Multiply(expression));
-//		}
-//		else if(expression.contains("-")){
-//			logAreaField.append(newLine + originalExpression + " = " + Minus(expression));
-//		}
-//		else if(expression.contains("/")){
-//			logAreaField.append(newLine + originalExpression + " = " + divide(expression));
-//		}
-//		else if(expression.contains("r")){
-//			logAreaField.append(newLine + originalExpression + " = " + root(expression));
-//		}
-//		else if(expression.contains("^")){
-//			logAreaField.append(newLine + originalExpression + " = " + exponential(expression));
-//		}
 	}
+	
+	/*
+	 * FUNCTIONS FOR SOLVING EXPRESSION
+	 */
 	
 	private String complexSolve(String expression){
 		while(true){
@@ -163,6 +158,7 @@ public class Calculator implements ActionListener {
 			}
 		}
 	}
+	
 	
 	private int getOperator(String expression){
 		int theOperator = -1;
@@ -195,9 +191,9 @@ public class Calculator implements ActionListener {
 		return theOperator;
 	}
 	
+	
 	private String splitExpression(String expression, String theOperator){
 		int opPos, startPos = 0, endPos = 0;
-		
 		opPos = expression.indexOf(theOperator);
 		
 		//get starting position
@@ -229,6 +225,7 @@ public class Calculator implements ActionListener {
 		return expression.substring(startPos, endPos);
 	}
 	
+	
 	private int countOperators(String expression){
 		int opCount = 0;
 		
@@ -239,8 +236,8 @@ public class Calculator implements ActionListener {
 		return opCount;
 	}
 	
-	private String variableSubstitution(String expression, String variable){
-		
+	
+	private String variableSubstitution(String expression, String variable){	
 		if (expression.contains("pi")){
 			String pi = Double.toString(Math.PI);
 			expression = expression.replace("pi", pi);
@@ -254,6 +251,7 @@ public class Calculator implements ActionListener {
 		}
 		return expression;
 	}
+	
 	
 	private String simpleSolve(String expression){
 		String temp = "";
@@ -279,12 +277,13 @@ public class Calculator implements ActionListener {
 		return temp;
 	}
 	
-	//	+ unary eliminator
+	
+	/*
+	 * SIMPLE MATH FUNCTIONS
+	 */
+	
+	// Positive (+) Unary Check
 	public void checkForPositiveUnary(String expression){
-		/*
-		 * Converting char array to a list because you can't remove an element from a 
-		 * basic java array, remove elements is easier with an ArrayList
-		 */
 		char [] expressionArray = expression.toCharArray();
 		List<Character> charList = new ArrayList<Character>();
 		for (char c: expressionArray){
@@ -307,8 +306,6 @@ public class Calculator implements ActionListener {
 				 * (if previous character is an operator and the following character isn't an operator 
 				 * e.g. *+3, r+4, etc.)
 				 */
-				
-				// Introducing the longest if statement ever. Behold: 
 				if (((charList.get(i-1) == '*') || (charList.get(i-1) == '/') || (charList.get(i-1) == '+') ||
 					(charList.get(i-1) == '-') || (charList.get(i-1) == 'r') || (charList.get(i-1) == '^') ||
 					(charList.get(i-1) == '(') || (charList.get(i-1) == ')')) 
@@ -324,7 +321,7 @@ public class Calculator implements ActionListener {
 	}
 	
 	
-	//	- unary -- add n
+	//	Adding (n) for Negative Unary
 	public String addUnary(String expression){
 		char [] expressionArray = expression.toCharArray();
 		char temp = expressionArray[0];
@@ -352,7 +349,8 @@ public class Calculator implements ActionListener {
 		return expression;
 	}
 	
-	//	- unary -- replace n
+	
+	//	Replacing 'n' for the Negative Unary
 	public String[] replaceUnary(String [] expression){
 		for (int i = 0; i < expression.length; i++){
 			expression[i] = expression[i].replace('n', '-');
@@ -360,7 +358,8 @@ public class Calculator implements ActionListener {
 		return expression;
 	}
 
-	//	find ()
+	
+	//	Finding Inner most ()
 	public String handleParentheses(String expression){
 		
 		int innerParentheses = expression.lastIndexOf('(');
@@ -370,7 +369,8 @@ public class Calculator implements ActionListener {
 		return innerExpression;
 	}
 	
-	// validate parentheses
+	
+	// Validate parentheses: throws exception if invalid
 	public boolean parenthesesCheck(String expression){
 		
 			char [] expressionArray = expression.toCharArray();
@@ -398,7 +398,8 @@ public class Calculator implements ActionListener {
 			return true;
 	}
 
-	//	Solve ^
+	
+	//	Solves exponential: ^
 	public String exponential(String expression){
 		String[] temp = expression.split("\\^");
 		temp = replaceUnary(temp);
@@ -411,7 +412,8 @@ public class Calculator implements ActionListener {
 		return Double.toString(rootValue);
 	}
 	
-	//	Solve r
+	
+	//	Solves root: r
 	public String root(String expression){
 		String[] temp = expression.split("r");
 		temp = replaceUnary(temp);
@@ -425,23 +427,26 @@ public class Calculator implements ActionListener {
 		return Double.toString(rootValue);
 	}
 	
-	//	Solve *
-		public String Multiply(String expression){
-			String[] temp = expression.split("\\*");
-			temp = replaceUnary(temp);
-			String result;
-			double[] nums = new double[2];
-			double product;
-			
-			nums[0] = Double.parseDouble(temp[0]);
-			nums[1] = Double.parseDouble(temp[1]);
-			product = nums[0] * nums[1];
-			result = Double.toString(product);
-			
-			return result;
-			
-		}
-	//	Solve / 
+	
+	// Solves multiplication: *
+	public String Multiply(String expression){
+		String[] temp = expression.split("\\*");
+		temp = replaceUnary(temp);
+		String result;
+		double[] nums = new double[2];
+		double product;
+		
+		nums[0] = Double.parseDouble(temp[0]);
+		nums[1] = Double.parseDouble(temp[1]);
+		product = nums[0] * nums[1];
+		result = Double.toString(product);
+		
+		return result;
+		
+	}
+		
+		
+	//	Solves division: /
 	public String divide(String expression){
 		String[] temp = expression.split("\\/");
 		temp = replaceUnary(temp);
@@ -454,8 +459,9 @@ public class Calculator implements ActionListener {
 		return Double.toString(dividend);
 		
 	}
+	
 		
-	//	Solve + (Jeremy)
+	//	Solves addition: + 
 	public String Add(String expression){
 		String[] temp = expression.split("\\+");
 		temp = replaceUnary(temp);
@@ -471,7 +477,8 @@ public class Calculator implements ActionListener {
 		return result;
 	}
 
-	//	Solve -
+	
+	//	Solves subtraction:  -
 	public String Minus(String expression){
 		String[] temp = expression.split("\\-");
 		temp = replaceUnary(temp);
@@ -487,8 +494,8 @@ public class Calculator implements ActionListener {
 		return result;
 	}
 	
-	//	Return Boolean - Check there are no more operators
-
+	
+	// Checks for operators, returns true if expression still needs evaluation
 	public boolean checkForOperators(String expression){
 		if(expression.contains("+") || expression.contains("-") || expression.contains("r") 
 		|| expression.contains("^") || expression.contains("*") || expression.contains("/")
@@ -502,8 +509,7 @@ public class Calculator implements ActionListener {
 	}
 	
 	
-	//	Space replacer
-
+	//	Removes blanks/spaces from expression
 	public String removeBlanks(String expression){
 		expression = expression.replaceAll("\\s", "");
 		return expression;
