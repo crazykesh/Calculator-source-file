@@ -25,9 +25,9 @@ public class Calculator implements ActionListener {
 	private JLabel variableLabel = new JLabel("For x:");
 	private JLabel logAreaLabel = new JLabel("Log:");
 	private JScrollPane logScrollPane = new JScrollPane(logAreaField);
-	private String[] operators = {"n", "(", "^", "r", "*", "/", "+", "-"};
-	private int[] 	 priority =  { 4,   3,   2,   2,   1,   1,   0,   0 };
-	//							   0    1    2    3    4    5    6    7
+	private String[] operators = {"(", "^", "r", "*", "/", "+", "-"};
+	private int[] 	 priority =  { 3,   2,   2,   1,   1,   0,   0 };
+	//						       1    2    3    4    5    6    7
 	List<String> operatorList = Arrays.asList(operators);
 	
 	public Calculator() {
