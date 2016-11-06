@@ -89,45 +89,30 @@ public class Calculator implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent ae) {	
 		try {
-			// Checking validity of argument
 			String originalExpression = inputField.getText().trim();
-			String expression = originalExpression.replace(" ", "");
-			String variable = variableField.getText().trim();
-			if ((expression.length() == 0)){
-				System.out.println("You didn't enter an expression");
-				errorField.setText("You didn't enter an expression");
-				return;
-			}
-			if (expression.contains("x")){
-				if (variable.length() == 0){
-					System.out.println("You didn't define your x value.");
-					errorField.setText("You didn't define your x value.");
-					return;
-				}
-			}
+			String expression = originalExpression;
 			
-			parenthesesCheck(expression);
-			checkForPositiveUnary(expression);
 			
-			// Testing Simple Functions
-			expression = variableSubstitution(expression, variable);
+			/* Checking validity of argument */
+			expressionsNotEmpty(originalExpression);
+			
+			 // ***** Should also remove extra spaces within this function & throw invalid - unary exception ****
+			// I feel like this makes sense because you're already checking for invalid spaces between the - unary and its number
 			expression = addUnary(expression);
+			
+			checkForPositiveUnary(expression);
+			parenthesesCheck(expression);
+			expressionOperatorsValid(expression);
+			
+			
+			/* Solving Expression */
+			// Replaces Variable
+			String variable = variableField.getText().trim();
+			expression = variableSubstitution(expression, variable);
+			
 			System.out.println("Your expression: " + expression);
 			
-//			if (expression.contains("(") || expression.contains(")")){
-//				if(parenthesesCheck(expression)){
-//					logAreaField.append(handleParentheses(expression));
-//					expression = handleParentheses(expression);
-//				}
-//				else{
-//					errorField.setText("Missing or invalid parenthesis.");
-//				}
-//			}
-			
-			
-			
-			
-			
+			// Calls Solve Function
 			expression = complexSolve(expression);
 			logAreaField.append(newLine + originalExpression + " = " + expression);
 			
@@ -486,6 +471,10 @@ public class Calculator implements ActionListener {
 		
 		nums[0] = Double.parseDouble(temp[0]);
 		nums[1] = Double.parseDouble(temp[1]);
+		if(nums[1] == 0){
+			throw new IllegalArgumentException("Error: Cannot devide by zero");
+		}
+		
 		double dividend = nums[0] / nums[1];
 
 		return Double.toString(dividend);
@@ -540,6 +529,32 @@ public class Calculator implements ActionListener {
 		}
 	}
 	
+	// Checks expression and x value is not empty
+	public void expressionsNotEmpty(String originalExpression){
+		String expression = originalExpression.replace(" ", "");
+		
+		// Checks string is not empty
+		if ((expression.length() == 0)){
+			System.out.println("You didn't enter an expression.");
+			throw new IllegalArgumentException("You didn't enter an expression.");
+		}
+		
+		// Checks x has a value
+		String variable = variableField.getText().trim();
+		if (expression.contains("x")){
+			if (variable.length() == 0){
+				System.out.println("You didn't define your x value.");
+				throw new IllegalArgumentException("You didn't define your x value.");
+			}
+		}		
+	}
+	
+	// Checks that operators are valid (multiple operators are not next to each other i.e. +*/ ) 
+	public void expressionOperatorsValid(String expression){
+		
+		
+	}
+	
 	
 	//	Removes blanks/spaces from expression
 	public String removeBlanks(String expression){
@@ -547,6 +562,5 @@ public class Calculator implements ActionListener {
 		return expression;
 	}
 	
-	//	Find end of expression
 
 }
