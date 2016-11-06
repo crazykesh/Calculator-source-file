@@ -109,6 +109,7 @@ public class Calculator implements ActionListener {
 		// Testing Simple Functions
 		
 		expression = variableSubstitution(expression, variable);
+		expression = removePositiveUnary(expression);
 		expression = addUnary(expression);
 		System.out.println("Your expression: " + expression);
 		
@@ -278,8 +279,64 @@ public class Calculator implements ActionListener {
 		return temp;
 	}
 	
-//	+ unary eliminator
+	//	+ unary eliminator
+	public String removePositiveUnary(String expression){
+		/*
+		 * Converting char array to a list because you can't remove an element from a 
+		 * basic java array, remove elements is easier with an ArrayList
+		 */
+		char [] expressionArray = expression.toCharArray();
+		List<Character> charList = new ArrayList<Character>();
+		for (char c: expressionArray){
+			charList.add(c);
+		}
+		
+		// Checks for positive unary for first character
+		if(charList.get(0) == '+'){
+			if ((charList.get(1) != '*') || (charList.get(1) != '/') || (charList.get(1) != '+') ||
+				(charList.get(1) != '-') || (charList.get(1) != 'r') || (charList.get(1) != '^') ||
+				(charList.get(1) != '(') || (charList.get(1) != ')')){
+				charList.remove(0);
+			}else{
+				// If there is a '+' and it is followed by another operator, exception is thrown.
+				throw new IllegalArgumentException("Missing operand or illegal unary operator.");
+			}
+		}
+		
+		int length = expressionArray.length;
+		for(int i = 1; i<length-1; i++){
+			if(charList.get(i) == '+'){
+				/* Checks if it is of positive operator
+				 * (if previous character is an operator and the following character isn't an operator 
+				 * e.g. *+3, r+4, etc.)
+				 */
+				
+				// Introducing the longest if statement ever. Behold: 
+				if (((charList.get(i-1) == '*') || (charList.get(i-1) == '/') || (charList.get(i-1) == '+') ||
+					(charList.get(i-1) == '-') || (charList.get(i-1) == 'r') || (charList.get(i-1) == '^') ||
+					(charList.get(i-1) == '(') || (charList.get(i-1) == ')')) 
+					&&
+					((charList.get(i+1) != '*') || (charList.get(i+1) != '/') || (charList.get(i+1) != '+') ||
+					(charList.get(i+1) != '-') || (charList.get(i+1) != 'r') || (charList.get(i+1) != '^') ||
+					(charList.get(i+1) != '(') || (charList.get(i+1) != ')'))) {
+					
+					charList.remove(i);
+					length--; 
+				} 
+			}
+		}
 
+		// Convert char ArrayList back to String
+	    StringBuilder builder = new StringBuilder(charList.size());
+	    for(Character ch: charList) {
+	        builder.append(ch);
+	    }
+	    expression = builder.toString();
+		
+		return expression;
+	}
+	
+	
 	//	- unary -- add n
 	public String addUnary(String expression){
 		char [] expressionArray = expression.toCharArray();
