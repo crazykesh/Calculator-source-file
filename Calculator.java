@@ -109,8 +109,8 @@ public class Calculator implements ActionListener {
 		// Testing Simple Functions
 		
 		expression = variableSubstitution(expression, variable);
-		expression = removePositiveUnary(expression);
 		expression = addUnary(expression);
+		checkForPositiveUnary(expression);
 		System.out.println("Your expression: " + expression);
 		
 		if (expression.contains("(") || expression.contains(")")){
@@ -280,7 +280,7 @@ public class Calculator implements ActionListener {
 	}
 	
 	//	+ unary eliminator
-	public String removePositiveUnary(String expression){
+	public void checkForPositiveUnary(String expression){
 		/*
 		 * Converting char array to a list because you can't remove an element from a 
 		 * basic java array, remove elements is easier with an ArrayList
@@ -296,10 +296,7 @@ public class Calculator implements ActionListener {
 			if ((charList.get(1) != '*') || (charList.get(1) != '/') || (charList.get(1) != '+') ||
 				(charList.get(1) != '-') || (charList.get(1) != 'r') || (charList.get(1) != '^') ||
 				(charList.get(1) != '(') || (charList.get(1) != ')')){
-				charList.remove(0);
-			}else{
-				// If there is a '+' and it is followed by another operator, exception is thrown.
-				throw new IllegalArgumentException("Missing operand or illegal unary operator.");
+				throw new IllegalArgumentException("Illegal '+' unary operator.");
 			}
 		}
 		
@@ -320,20 +317,10 @@ public class Calculator implements ActionListener {
 					(charList.get(i+1) != '-') || (charList.get(i+1) != 'r') || (charList.get(i+1) != '^') ||
 					(charList.get(i+1) != '(') || (charList.get(i+1) != ')'))) {
 					
-					charList.remove(i);
-					length--; 
+					throw new IllegalArgumentException("Illegal '+' unary operator.");
 				} 
 			}
 		}
-
-		// Convert char ArrayList back to String
-	    StringBuilder builder = new StringBuilder(charList.size());
-	    for(Character ch: charList) {
-	        builder.append(ch);
-	    }
-	    expression = builder.toString();
-		
-		return expression;
 	}
 	
 	
