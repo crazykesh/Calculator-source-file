@@ -333,6 +333,11 @@ public class Calculator implements ActionListener {
 	
 	//	Space replacer
 
+	public String removeBlanks(String expression){
+		expression = expression.replaceAll("\\s", "");
+		return expression;
+	}
+	
 	//	Find end of expression
 
 }
