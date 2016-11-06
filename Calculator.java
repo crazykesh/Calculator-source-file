@@ -89,6 +89,7 @@ public class Calculator implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent ae) {	
 		try {
+			// Checking validity of argument
 			String originalExpression = inputField.getText().trim();
 			String expression = originalExpression.replace(" ", "");
 			String variable = variableField.getText().trim();
@@ -105,23 +106,23 @@ public class Calculator implements ActionListener {
 				}
 			}
 			
+			parenthesesCheck(expression);
+			checkForPositiveUnary(expression);
 			
 			// Testing Simple Functions
-			
 			expression = variableSubstitution(expression, variable);
 			expression = addUnary(expression);
-			checkForPositiveUnary(expression);
 			System.out.println("Your expression: " + expression);
 			
-			if (expression.contains("(") || expression.contains(")")){
-				if(parenthesesCheck(expression)){
-					logAreaField.append(handleParentheses(expression));
-					expression = handleParentheses(expression);
-				}
-				else{
-					errorField.setText("Missing or invalid parenthesis.");
-				}
-			}
+//			if (expression.contains("(") || expression.contains(")")){
+//				if(parenthesesCheck(expression)){
+//					logAreaField.append(handleParentheses(expression));
+//					expression = handleParentheses(expression);
+//				}
+//				else{
+//					errorField.setText("Missing or invalid parenthesis.");
+//				}
+//			}
 			
 			
 			
@@ -145,11 +146,13 @@ public class Calculator implements ActionListener {
 	private String complexSolve(String expression){
 		while(true){
 			if (countOperators(expression) > 1){
-				int theOp = getOperator(expression);
-				String tempExpression = splitExpression(expression, operators[theOp]);
+				String innerExpression = handleParentheses(expression);
+				int theOp = getOperator(innerExpression);
+				String tempExpression = splitExpression(innerExpression, operators[theOp]);
 				String result = complexSolve(tempExpression);
 				String replacement = expression.replace(tempExpression, result);
 				expression = replacement;
+				expression = removeParenthes(expression);
 			}
 			else{
 				String result = simpleSolve(expression);
@@ -361,17 +364,47 @@ public class Calculator implements ActionListener {
 	
 	//	Finding Inner most ()
 	public String handleParentheses(String expression){
-		
-		int innerParentheses = expression.lastIndexOf('(');
-		String temp = expression.substring(innerParentheses);
-		String innerExpression = temp.substring(1, temp.indexOf(')'));
-		
-		return innerExpression;
+		if(expression.contains("(")){
+			int innerParentheses = expression.lastIndexOf('(');
+			String temp = expression.substring(innerParentheses);
+			String innerExpression = temp.substring(1, temp.indexOf(')'));
+			return innerExpression;
+		}
+		return expression;
 	}
 	
 	
+	// Removing () After Inner Expression is solved
+	public String removeParenthes(String expression){
+		String tempExpression = handleParentheses(expression);
+		if(checkForOperators(tempExpression)){
+			return expression;
+		}
+		
+		if(expression.contains("(")){
+			char [] expressionArray = expression.toCharArray();
+			List<Character> charList = new ArrayList<Character>();
+			for (char c: expressionArray){
+				charList.add(c);
+			}
+			
+			int parenthesesLocation = expression.indexOf(")");
+			charList.remove(parenthesesLocation);
+			parenthesesLocation = expression.lastIndexOf('(');
+			charList.remove(parenthesesLocation);
+			
+			// Convert char ArrayList back to String
+		    StringBuilder builder = new StringBuilder(charList.size());
+		    for(Character ch: charList) {
+		        builder.append(ch);
+		    }
+		    expression = builder.toString();
+		}
+		return expression;
+	}
+	
 	// Validate parentheses: throws exception if invalid
-	public boolean parenthesesCheck(String expression){
+	public void parenthesesCheck(String expression){
 		
 			char [] expressionArray = expression.toCharArray();
 			int leftParenCount = 0, rightParenCount = 0;
@@ -386,16 +419,15 @@ public class Calculator implements ActionListener {
 			}
 			
 			if (leftParenCount!=rightParenCount){
-				return false;
+				throw new IllegalArgumentException("Invalid parentheses operator.");
 			}
 			if (expression.indexOf('(') > expression.indexOf(')')){
-				return false;
+				throw new IllegalArgumentException("Invalid parentheses operator.");
 			}
 			if (expression.lastIndexOf('(') > expression.lastIndexOf(')')){
-				return false;
+				throw new IllegalArgumentException("Invalid parentheses operator.");
 			}
 			
-			return true;
 	}
 
 	
