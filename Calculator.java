@@ -167,7 +167,7 @@ public class Calculator implements ActionListener {
 	private int getOperator(String expression){
 		int theOperator = -1;
 		boolean stop = false;
-		int highestPriority = 0;
+		int highestPriority = -1;
 		int count = 0;
 		int opCount = countOperators(expression);
 		Integer[] opIndexList = new Integer[opCount];
