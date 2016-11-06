@@ -3,6 +3,7 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.JFrame;
@@ -24,7 +25,11 @@ public class Calculator implements ActionListener {
 	private JLabel variableLabel = new JLabel("For x:");
 	private JLabel logAreaLabel = new JLabel("Log:");
 	private JScrollPane logScrollPane = new JScrollPane(logAreaField);
-
+	private String[] operators = {"n", "(", "^", "r", "*", "/", "+", "-"};
+	private int[] 	 priority =  { 4,   3,   2,   2,   1,   1,   0,   0 };
+	//							   0    1    2    3    4    5    6    7
+	List<String> operatorList = Arrays.asList(operators);
+	
 	public Calculator() {
 		calcWindow.setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
@@ -110,29 +115,127 @@ public class Calculator implements ActionListener {
 		if (expression.contains("(") || expression.contains(")")){
 			if(parenthesesCheck(expression)){
 				logAreaField.append(handleParentheses(expression));
+				expression = handleParentheses(expression);
 			}
 			else{
 				errorField.setText("error");
 			}
 		}
-		if(expression.contains("+")){
-			logAreaField.append(newLine + originalExpression + " = " + Add(expression));
+		
+		
+		expression = complexSolve(expression);
+		
+		logAreaField.append(newLine + originalExpression + " = " + expression);
+//		if(expression.contains("+")){
+//			logAreaField.append(newLine + originalExpression + " = " + Add(expression));
+//		}
+//		else if(expression.contains("*")){
+//			logAreaField.append(newLine + originalExpression + " = " + Multiply(expression));
+//		}
+//		else if(expression.contains("-")){
+//			logAreaField.append(newLine + originalExpression + " = " + Minus(expression));
+//		}
+//		else if(expression.contains("/")){
+//			logAreaField.append(newLine + originalExpression + " = " + divide(expression));
+//		}
+//		else if(expression.contains("r")){
+//			logAreaField.append(newLine + originalExpression + " = " + root(expression));
+//		}
+//		else if(expression.contains("^")){
+//			logAreaField.append(newLine + originalExpression + " = " + exponential(expression));
+//		}
+	}
+	
+	private String complexSolve(String expression){
+		while(true){
+			if (countOperators(expression) > 1){
+				int theOp = getOperator(expression);
+				String tempExpression = splitExpression(expression, operators[theOp]);
+				String result = complexSolve(tempExpression);
+				String replacement = expression.replace(tempExpression, result);
+				expression = replacement;
+			}
+			else{
+				String result = simpleSolve(expression);
+				String replacement = expression.replace(expression, result);
+				return replacement;
+			}
 		}
-		else if(expression.contains("*")){
-			logAreaField.append(newLine + originalExpression + " = " + Multiply(expression));
+	}
+	
+	private int getOperator(String expression){
+		int theOperator = -1;
+		boolean stop = false;
+		int highestPriority = 0;
+		int count = 0;
+		int opCount = countOperators(expression);
+		Integer[] opIndexList = new Integer[opCount];
+		Integer[] opPriorityList = new Integer[opCount];
+		
+		for(int i=0; i<expression.length(); i++){
+			if(stop) break;
+			for(int j=0; j<operators.length; j++){
+				if(expression.charAt(i) == operators[j].charAt(0)){
+					opIndexList[count] = j;
+					opPriorityList[count++] = priority[j];
+					break;
+				}
+			}
 		}
-		else if(expression.contains("-")){
-			logAreaField.append(newLine + originalExpression + " = " + Minus(expression));
+		
+		for(int i=0; i<opCount; i++){
+			if(opPriorityList[i] > highestPriority){
+				highestPriority = opPriorityList[i];
+				theOperator = opIndexList[i];
+			}
 		}
-		else if(expression.contains("/")){
-			logAreaField.append(newLine + originalExpression + " = " + divide(expression));
+		
+		
+		return theOperator;
+	}
+	
+	private String splitExpression(String expression, String theOperator){
+		int opPos, startPos = 0, endPos = 0;
+		
+		opPos = expression.indexOf(theOperator);
+		
+		//get starting position
+		for(int i=0; i<operators.length; i++){
+			startPos = expression.indexOf(operators[i]);
+			if(startPos < opPos && startPos != -1){
+				startPos++;	//add 1 here to set the position on the next character (not an operator)
+				break;
+			}
+			else{
+				startPos = -1;
+			}
 		}
-		else if(expression.contains("r")){
-			logAreaField.append(newLine + originalExpression + " = " + root(expression));
+		if(startPos == -1) startPos = 0;
+		
+		//get ending position
+		for(int i=opPos+1; i<expression.length(); i++){
+			if(i+1 > expression.length()) break;
+			if(operatorList.contains(expression.substring(i, i+1))){
+				endPos = i;
+				break;
+			}
+			else{
+				endPos = -1;
+			}
 		}
-		else if(expression.contains("^")){
-			logAreaField.append(newLine + originalExpression + " = " + exponential(expression));
+		if(endPos == -1) endPos = expression.length();
+			
+		return expression.substring(startPos, endPos);
+	}
+	
+	private int countOperators(String expression){
+		int opCount = 0;
+		
+		for(int i=0; i<operators.length; i++){
+			opCount += expression.length() - expression.replace(operators[i], "").length();
 		}
+		
+		return opCount;
 	}
 	
 	private String variableSubstitution(String expression, String variable){
@@ -149,6 +252,30 @@ public class Calculator implements ActionListener {
 			expression = expression.replace("x", variable);
 		}
 		return expression;
+	}
+	
+	private String simpleSolve(String expression){
+		String temp = "";
+		
+		if(expression.contains("+")){
+			temp = Add(expression);
+		}
+		else if(expression.contains("*")){
+			temp = Multiply(expression);
+		}
+		else if(expression.contains("-")){
+			temp = Minus(expression);
+		}
+		else if(expression.contains("/")){
+			temp = divide(expression);
+		}
+		else if(expression.contains("r")){
+			temp = root(expression);
+		}
+		else if(expression.contains("^")){
+			temp = exponential(expression);
+		}
+		return temp;
 	}
 	
 //	+ unary eliminator
