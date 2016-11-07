@@ -146,7 +146,8 @@ public class Calculator implements ActionListener {
 				int theOp = getOperator(innerExpression);
 				String tempExpression = splitExpression(innerExpression, operators[theOp]);
 				String result = complexSolve(tempExpression);
-				String replacement = expression.replace(tempExpression, result);
+				int thing = expression.indexOf(tempExpression);
+				String replacement = expression.substring(0, thing) + result + expression.substring(thing + tempExpression.length());
 				expression = replacement;
 				expression = removeParenthes(expression);
 			} else if (countOperators(expression) == 0){
