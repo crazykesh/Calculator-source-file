@@ -206,15 +206,6 @@ public class Calculator implements ActionListener {
 				startPos = i+1;
 				break;
 			}
-			
-//			startPos = expression.indexOf(operators[i]);
-//			if(startPos < opPos && startPos != -1){
-//				startPos++;	//add 1 here to set the position on the next character (not an operator)
-//				break;
-//			}
-//			else{
-//				startPos = -1;
-//			}
 		}
 		if(startPos == -1) startPos = 0;
 		
