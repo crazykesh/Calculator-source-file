@@ -119,6 +119,8 @@ public class Calculator implements ActionListener {
 			
 			// Calls Solve Function
 			expression = complexSolve(expression);
+			expression = expression.replaceAll("n", "-");
+			
 			if (!(variable.equals(""))){
 				logAreaField.append(newLine + originalExpression + " = " + expression + " for x = " + variable);
 			}
@@ -150,6 +152,7 @@ public class Calculator implements ActionListener {
 				String replacement = expression.substring(0, thing) + result + expression.substring(thing + tempExpression.length());
 				expression = replacement;
 				expression = removeParenthes(expression);
+				System.out.println(expression);
 			} else if (countOperators(expression) == 0){
 				return expression;
 			} else {
@@ -383,9 +386,10 @@ public class Calculator implements ActionListener {
 	// Removing () After Inner Expression is solved
 	public String removeParenthes(String expression){
 		String tempExpression = handleParentheses(expression);
+		tempExpression = addUnary(tempExpression);
 		
 		if(expression.contains("(")){
-			if(!checkForOperators(tempExpression)){
+			if(countOperators(tempExpression) == 0){
 				char [] expressionArray = expression.toCharArray();
 				// remove )
 				List<Character> charList1 = new ArrayList<Character>();
@@ -419,6 +423,7 @@ public class Calculator implements ActionListener {
 			    expression = builder2.toString();
 			}
 		}
+		expression = addUnary(expression);
 		return expression;
 	}
 	
@@ -592,7 +597,7 @@ public class Calculator implements ActionListener {
 	// Checks that operators are valid (multiple operators are not next to each other i.e. +*/ ) 
 	public void expressionOperatorsValid(String expression){
 		char [] expressionArray = expression.toCharArray();
-		for(int i = 0; i < expressionArray.length ; i++){
+		for(int i = 0; i < expressionArray.length-1 ; i++){
 			char c1 = expressionArray[i];
 			char c2 = expressionArray[i+1];
 			if(( c1 == '/' || c1 == '+' || c1 == '-' || c1 == '*' || c1 == 'r' || c1 == '^') && 
