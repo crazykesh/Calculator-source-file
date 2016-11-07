@@ -28,7 +28,7 @@ public class Calculator implements ActionListener {
 	private JScrollPane logScrollPane = new JScrollPane(logAreaField);
 	private String[] operators = {"(", "^", "r", "*", "/", "+", "-"};
 	private int[] 	 priority =  { 3,   2,   2,   1,   1,   0,   0 };
-	//						       1    2    3    4    5    6    7
+	//						       0    1    2    3    4    5    6
 	List<String> operatorList = Arrays.asList(operators);
 	
 	public Calculator() {
@@ -201,15 +201,20 @@ public class Calculator implements ActionListener {
 		opPos = expression.indexOf(theOperator);
 		
 		//get starting position
-		for(int i=0; i<operators.length; i++){
-			startPos = expression.indexOf(operators[i]);
-			if(startPos < opPos && startPos != -1){
-				startPos++;	//add 1 here to set the position on the next character (not an operator)
+		for(int i=opPos-1; i>-1; i--){
+			if(operatorList.contains(expression.substring(i, i+1))){
+				startPos = i+1;
 				break;
 			}
-			else{
-				startPos = -1;
-			}
+			
+//			startPos = expression.indexOf(operators[i]);
+//			if(startPos < opPos && startPos != -1){
+//				startPos++;	//add 1 here to set the position on the next character (not an operator)
+//				break;
+//			}
+//			else{
+//				startPos = -1;
+//			}
 		}
 		if(startPos == -1) startPos = 0;
 		
