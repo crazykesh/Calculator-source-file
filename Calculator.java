@@ -91,7 +91,7 @@ public class Calculator implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent ae) {	
 		try {
-			String originalExpression = inputField.getText().trim();
+			String originalExpression = inputField.getText().trim().toLowerCase();
 			String variable = variableField.getText().trim();
 			
 			
@@ -105,7 +105,6 @@ public class Calculator implements ActionListener {
 			expression = variableSubstitution(expression, variable);
 			
 			// More Validity checks: 
-			expressionOperatorsValid(expression);
 			expression = addUnary(expression);
 		
 			checkForPositiveUnary(expression);
@@ -432,9 +431,17 @@ public class Calculator implements ActionListener {
 			for(int i = 0; i < expressionArray.length; i++){
 				if (expressionArray[i] == '('){
 					leftParenCount++;
+					if (!(expressionArray[i-1] != '*') || (expressionArray[i-1] != '/') || (expressionArray[i-1] != '+') ||
+					(expressionArray[i-1] != '-') || (expressionArray[i-1] != 'r') || (expressionArray[i-1] != '^')){
+						throw new IllegalArgumentException("Implicit Multiplication is not allowed");
+					}
 				}
 				if (expressionArray[i] == ')'){
 					rightParenCount++;
+					if (!(expressionArray[i+1] != '*') || (expressionArray[i+1] != '/') || (expressionArray[i+1] != '+') ||
+					(expressionArray[i+1] != '-') || (expressionArray[i+1] != 'r') || (expressionArray[i+1] != '^')){
+						throw new IllegalArgumentException("Implicit Multiplication is not allowed");
+					}
 				}
 				if (rightParenCount > leftParenCount){
 					throw new IllegalArgumentException("Invalid Parentheses operator");
@@ -512,7 +519,7 @@ public class Calculator implements ActionListener {
 		if(nums[1] == 0){
 			throw new IllegalArgumentException("Error: Cannot devide by zero");
 		}
-		
+
 		double dividend = nums[0] / nums[1];
 
 		return Double.toString(dividend);
