@@ -1,3 +1,4 @@
+import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -69,6 +70,7 @@ public class Calculator implements ActionListener {
 		
 		logAreaField.setEditable(false);
 		errorField.setEditable(false);
+		errorField.setBackground(Color.pink);
 		
 		calcWindow.setSize(400, 450);
 		calcWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -90,12 +92,13 @@ public class Calculator implements ActionListener {
 	public void actionPerformed(ActionEvent ae) {	
 		try {
 			String originalExpression = inputField.getText().trim();
-			String expression = originalExpression;
 			
 			
 			/* Checking validity of argument */
 			expressionsNotEmpty(originalExpression);
 			checkForInvalidCharacters(originalExpression);
+			originalExpression = removeEquals(originalExpression);
+			String expression = originalExpression;
 			
 			 // ***** Should also remove extra spaces within this function & throw invalid - unary exception ****
 			// I feel like this makes sense because you're already checking for invalid spaces between the - unary and its number
@@ -116,6 +119,7 @@ public class Calculator implements ActionListener {
 			// Calls Solve Function
 			expression = complexSolve(expression);
 			logAreaField.append(newLine + originalExpression + " = " + expression);
+			errorField.setText("");
 			
 		} catch (Exception e) {
 			String message = e.getMessage();
@@ -312,6 +316,7 @@ public class Calculator implements ActionListener {
 		char [] expressionArray = expression.toCharArray();
 		char temp = expressionArray[0];
 		List<Integer> unaryLocation = new ArrayList<Integer>();
+		List<Integer> spaceLocation = new ArrayList<Integer>();
 		
 		if (temp == '-'){
 			if ((expressionArray[1] != '*') || (expressionArray[1] != '/') || (expressionArray[1] != '+') ||
@@ -319,19 +324,28 @@ public class Calculator implements ActionListener {
 					(expressionArray[1] != '(') || (expressionArray[1] != ')')){
 				unaryLocation.add(0);
 			}
+			else if (expressionArray[1] == ' '){
+				throw new IllegalArgumentException("Can't have space after negative unary");
+			}
 		}
 		
 		for(int i = 1; i < expressionArray.length; i++){
 			if (expressionArray[i] == '-'){
 				if ((temp == '*') || (temp == '/') || (temp == '+') || (temp == '-') || (temp == 'r') || (temp == '^')){
+					if (expressionArray[i+1] == ' '){
+						throw new IllegalArgumentException("Can't have space after negative unary");
+					}
 					unaryLocation.add(i);
 				}
 			}
-			temp = expressionArray[i];
+			if(expressionArray[i] != ' '){
+				temp = expressionArray[i];
+			}
 		}
 		for(Integer j : unaryLocation){
 			expression = expression.substring(0,j) + 'n' + expression.substring(j+1);
 		}
+		expression = removeBlanks(expression);				// gets rid of blanks
 		return expression;
 	}
 	
@@ -573,7 +587,7 @@ public class Calculator implements ActionListener {
 			char c = expressionArray[i];
 			if(!(c == '1' || c == '2' || c == '3' || c == '4' || c == '5' || c == '6' || c == '7' || c == '8' || c == '9' || c == '0' ||
 				 c == '/' || c == '+' || c == '-' || c == '*' || c == 'r' || c == '^' || c == '(' || c == ')' || c == 'n' || c == 'x' || 
-				 ((c == 'p') && (expressionArray[i+1] == 'i')) || c == 'e' || c == ' ')) {
+				 ((c == 'p') && (expressionArray[i+1] == 'i')) || c == 'e' || c == ' ' || c == '=')) {
 				throw new IllegalArgumentException("Invalid operator or character in expression.");
 			}
 		}
@@ -583,6 +597,15 @@ public class Calculator implements ActionListener {
 	//	Removes blanks/spaces from expression
 	public String removeBlanks(String expression){
 		expression = expression.replaceAll("\\s", "");
+		return expression;
+	}
+	
+	// Remove = sign and things that follow
+	public String removeEquals(String expression){
+		if (expression.contains("=")){
+			int equalLocation = expression.indexOf('=');
+			expression = expression.substring(0, equalLocation);
+		}
 		return expression;
 	}
 	
