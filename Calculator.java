@@ -380,42 +380,41 @@ public class Calculator implements ActionListener {
 	// Removing () After Inner Expression is solved
 	public String removeParenthes(String expression){
 		String tempExpression = handleParentheses(expression);
-		if(checkForOperators(tempExpression)){
-			return expression;
-		}
 		
 		if(expression.contains("(")){
-			char [] expressionArray = expression.toCharArray();
-			// remove )
-			List<Character> charList1 = new ArrayList<Character>();
-			for (char c: expressionArray){
-				charList1.add(c);
+			if(!checkForOperators(tempExpression)){
+				char [] expressionArray = expression.toCharArray();
+				// remove )
+				List<Character> charList1 = new ArrayList<Character>();
+				for (char c: expressionArray){
+					charList1.add(c);
+				}
+				
+				int parenthesesLocation1 = expression.lastIndexOf("(");
+				charList1.remove(parenthesesLocation1);
+				
+			    StringBuilder builder1 = new StringBuilder(charList1.size());
+			    for(Character ch: charList1) {
+			        builder1.append(ch);
+			    }
+			    expression = builder1.toString();
+			    
+			    // removing (
+				expressionArray = expression.toCharArray();
+				List<Character> charList2 = new ArrayList<Character>();
+				for (char c: expressionArray){
+					charList2.add(c);
+				}
+				
+				int parenthesesLocation2 = expression.indexOf(')', parenthesesLocation1);
+				charList2.remove(parenthesesLocation2);
+				
+			    StringBuilder builder2 = new StringBuilder(charList2.size());
+			    for(Character ch: charList2) {
+			        builder2.append(ch);
+			    }
+			    expression = builder2.toString();
 			}
-			
-			int parenthesesLocation = expression.lastIndexOf("(");
-			charList1.remove(parenthesesLocation);
-			
-		    StringBuilder builder1 = new StringBuilder(charList1.size());
-		    for(Character ch: charList1) {
-		        builder1.append(ch);
-		    }
-		    expression = builder1.toString();
-		    
-		    // removing (
-			expressionArray = expression.toCharArray();
-			List<Character> charList2 = new ArrayList<Character>();
-			for (char c: expressionArray){
-				charList2.add(c);
-			}
-			
-			parenthesesLocation = expression.indexOf(')');
-			charList2.remove(parenthesesLocation);
-			
-		    StringBuilder builder2 = new StringBuilder(charList2.size());
-		    for(Character ch: charList2) {
-		        builder2.append(ch);
-		    }
-		    expression = builder2.toString();
 		}
 		return expression;
 	}
