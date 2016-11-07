@@ -94,6 +94,9 @@ public class Calculator implements ActionListener {
 			String originalExpression = inputField.getText().trim().toLowerCase();
 			String variable = variableField.getText().trim();
 			
+			originalExpression = originalExpression.replaceAll("=", "");
+			inputField.setText(originalExpression);
+			
 			
 			/* Checking validity of argument */
 			expressionsNotEmpty(originalExpression);
@@ -127,6 +130,7 @@ public class Calculator implements ActionListener {
 				logAreaField.append(newLine + originalExpression + " = " + expression);
 			}
 			errorField.setText("");
+			inputField.setText("");
 			
 		} catch (Exception e) {
 			String message = e.getMessage();
