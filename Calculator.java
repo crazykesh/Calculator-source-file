@@ -619,7 +619,7 @@ public class Calculator implements ActionListener {
 			char c = expressionArray[i];
 			if(!(c == '1' || c == '2' || c == '3' || c == '4' || c == '5' || c == '6' || c == '7' || c == '8' || c == '9' || c == '0' ||
 				 c == '/' || c == '+' || c == '-' || c == '*' || c == 'r' || c == '^' || c == '(' || c == ')' || c == 'n' || c == 'x' || 
-				 ((c == 'p') && (expressionArray[i+1] == 'i')) || ((c == 'i') && (expressionArray[i-1] == 'p')) || c == 'e' || c == ' ' || c == '=')) {
+				 ((c == 'p') && (expressionArray[i+1] == 'i')) || ((c == 'i') && (expressionArray[i-1] == 'p')) || c == 'e' || c == ' ' || c == '=' || c == '.')) {
 				throw new IllegalArgumentException("Invalid operator or character in expression.");
 			}
 		}
