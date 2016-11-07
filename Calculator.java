@@ -149,7 +149,9 @@ public class Calculator implements ActionListener {
 				String replacement = expression.replace(tempExpression, result);
 				expression = replacement;
 				expression = removeParenthes(expression);
-			} else{
+			} else if (countOperators(expression) == 0){
+				return expression;
+			} else {
 				String result = simpleSolve(expression);
 				String replacement = expression.replace(expression, result);
 				return replacement;
