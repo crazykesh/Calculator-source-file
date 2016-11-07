@@ -92,13 +92,17 @@ public class Calculator implements ActionListener {
 	public void actionPerformed(ActionEvent ae) {	
 		try {
 			String originalExpression = inputField.getText().trim();
+			String variable = variableField.getText().trim();
 			
 			
 			/* Checking validity of argument */
 			expressionsNotEmpty(originalExpression);
-			checkForInvalidCharacters(originalExpression);
+			checkForInvalidCharacters(originalExpression, variable);
 			originalExpression = removeEquals(originalExpression);
 			String expression = originalExpression;
+			
+			// Replaces Variable
+			expression = variableSubstitution(expression, variable);
 			
 			 // ***** Should also remove extra spaces within this function & throw invalid - unary exception ****
 			// I feel like this makes sense because you're already checking for invalid spaces between the - unary and its number
@@ -110,15 +114,17 @@ public class Calculator implements ActionListener {
 			
 			
 			/* Solving Expression */
-			// Replaces Variable
-			String variable = variableField.getText().trim();
-			expression = variableSubstitution(expression, variable);
 			
 			System.out.println("Your expression: " + expression);
 			
 			// Calls Solve Function
 			expression = complexSolve(expression);
-			logAreaField.append(newLine + originalExpression + " = " + expression);
+			if (!(variable.equals(""))){
+				logAreaField.append(newLine + originalExpression + " = " + expression + " for x = " + variable);
+			}
+			else{
+				logAreaField.append(newLine + originalExpression + " = " + expression);
+			}
 			errorField.setText("");
 			
 		} catch (Exception e) {
@@ -331,7 +337,7 @@ public class Calculator implements ActionListener {
 		
 		for(int i = 1; i < expressionArray.length; i++){
 			if (expressionArray[i] == '-'){
-				if ((temp == '*') || (temp == '/') || (temp == '+') || (temp == '-') || (temp == 'r') || (temp == '^')){
+				if ((temp == '*') || (temp == '/') || (temp == '+') || (temp == '-') || (temp == 'r') || (temp == '^') || (temp == '(')){
 					if (expressionArray[i+1] == ' '){
 						throw new IllegalArgumentException("Can't have space after negative unary");
 					}
@@ -572,7 +578,13 @@ public class Calculator implements ActionListener {
 				System.out.println("You didn't define your x value.");
 				throw new IllegalArgumentException("You didn't define your x value.");
 			}
-		}		
+		}
+		if (variable.length() != 0){
+			if (!(expression.contains("x"))){
+				System.out.println("You submitted an x value without putting it in expression");
+				throw new IllegalArgumentException("You submitted an x value without putting it in expression");
+			}
+		}
 	}
 	
 	// Checks that operators are valid (multiple operators are not next to each other i.e. +*/ ) 
@@ -581,7 +593,7 @@ public class Calculator implements ActionListener {
 		
 	}
 	
-	public void checkForInvalidCharacters(String expression){
+	public void checkForInvalidCharacters(String expression, String variable){
 		char [] expressionArray = expression.toCharArray();
 		for(int i = 0; i < expressionArray.length ; i++){
 			char c = expressionArray[i];
@@ -590,6 +602,16 @@ public class Calculator implements ActionListener {
 				 ((c == 'p') && (expressionArray[i+1] == 'i')) || ((c == 'i') && (expressionArray[i-1] == 'p')) || c == 'e' || c == ' ' || c == '=')) {
 				throw new IllegalArgumentException("Invalid operator or character in expression.");
 			}
+		}
+		if (variable.contains("-")){
+			if (!(variable.equals("-1") || variable.equals("-2") || variable.equals("-3") || variable.equals("-4") || variable.equals("-5") || variable.equals("-6") ||
+					variable.equals("-7") || variable.equals("-8") || variable.equals("-9") || variable.equals("-0") || variable.equals("") )){
+				throw new IllegalArgumentException("X must be a single digit number");
+			}
+		}
+		else if (!(variable.equals("1") || variable.equals("2") || variable.equals("3") || variable.equals("4") || variable.equals("5") || variable.equals("6") ||
+				variable.equals("7") || variable.equals("8") || variable.equals("9") || variable.equals("0") || variable.equals("") )){
+			throw new IllegalArgumentException("X must be a single digit number");
 		}
 		
 	}
