@@ -138,8 +138,7 @@ public class Calculator implements ActionListener {
 				String replacement = expression.replace(tempExpression, result);
 				expression = replacement;
 				expression = removeParenthes(expression);
-			}
-			else{
+			} else{
 				String result = simpleSolve(expression);
 				String replacement = expression.replace(expression, result);
 				return replacement;
@@ -282,7 +281,7 @@ public class Calculator implements ActionListener {
 		if(charList.get(0) == '+'){
 			if ((charList.get(1) != '*') || (charList.get(1) != '/') || (charList.get(1) != '+') ||
 				(charList.get(1) != '-') || (charList.get(1) != 'r') || (charList.get(1) != '^') ||
-				(charList.get(1) != '(') || (charList.get(1) != ')')){
+				(charList.get(1) != ')')){
 				throw new IllegalArgumentException("Illegal '+' unary operator.");
 			}
 		}
@@ -295,12 +294,10 @@ public class Calculator implements ActionListener {
 				 * e.g. *+3, r+4, etc.)
 				 */
 				if (((charList.get(i-1) == '*') || (charList.get(i-1) == '/') || (charList.get(i-1) == '+') ||
-					(charList.get(i-1) == '-') || (charList.get(i-1) == 'r') || (charList.get(i-1) == '^') ||
-					(charList.get(i-1) == '(') || (charList.get(i-1) == ')')) 
+					(charList.get(i-1) == '-') || (charList.get(i-1) == 'r') || (charList.get(i-1) == '^')) 
 					&&
 					((charList.get(i+1) != '*') || (charList.get(i+1) != '/') || (charList.get(i+1) != '+') ||
-					(charList.get(i+1) != '-') || (charList.get(i+1) != 'r') || (charList.get(i+1) != '^') ||
-					(charList.get(i+1) != '(') || (charList.get(i+1) != ')'))) {
+					(charList.get(i+1) != '-') || (charList.get(i+1) != 'r') || (charList.get(i+1) != '^'))) {
 					
 					throw new IllegalArgumentException("Illegal '+' unary operator.");
 				} 
@@ -368,22 +365,36 @@ public class Calculator implements ActionListener {
 		
 		if(expression.contains("(")){
 			char [] expressionArray = expression.toCharArray();
-			List<Character> charList = new ArrayList<Character>();
+			// remove )
+			List<Character> charList1 = new ArrayList<Character>();
 			for (char c: expressionArray){
-				charList.add(c);
+				charList1.add(c);
 			}
 			
-			int parenthesesLocation = expression.indexOf(")");
-			charList.remove(parenthesesLocation);
-			parenthesesLocation = expression.lastIndexOf('(');
-			charList.remove(parenthesesLocation);
+			int parenthesesLocation = expression.lastIndexOf("(");
+			charList1.remove(parenthesesLocation);
 			
-			// Convert char ArrayList back to String
-		    StringBuilder builder = new StringBuilder(charList.size());
-		    for(Character ch: charList) {
-		        builder.append(ch);
+		    StringBuilder builder1 = new StringBuilder(charList1.size());
+		    for(Character ch: charList1) {
+		        builder1.append(ch);
 		    }
-		    expression = builder.toString();
+		    expression = builder1.toString();
+		    
+		    // removing (
+			expressionArray = expression.toCharArray();
+			List<Character> charList2 = new ArrayList<Character>();
+			for (char c: expressionArray){
+				charList2.add(c);
+			}
+			
+			parenthesesLocation = expression.indexOf(')');
+			charList2.remove(parenthesesLocation);
+			
+		    StringBuilder builder2 = new StringBuilder(charList2.size());
+		    for(Character ch: charList2) {
+		        builder2.append(ch);
+		    }
+		    expression = builder2.toString();
 		}
 		return expression;
 	}
