@@ -104,8 +104,8 @@ public class Calculator implements ActionListener {
 			// Replaces Variable
 			expression = variableSubstitution(expression, variable);
 			
-			 // ***** Should also remove extra spaces within this function & throw invalid - unary exception ****
-			// I feel like this makes sense because you're already checking for invalid spaces between the - unary and its number
+			// More Validity checks: 
+			expressionOperatorsValid(expression);
 			expression = addUnary(expression);
 		
 			checkForPositiveUnary(expression);
@@ -590,8 +590,15 @@ public class Calculator implements ActionListener {
 	
 	// Checks that operators are valid (multiple operators are not next to each other i.e. +*/ ) 
 	public void expressionOperatorsValid(String expression){
-		
-		
+		char [] expressionArray = expression.toCharArray();
+		for(int i = 0; i < expressionArray.length ; i++){
+			char c1 = expressionArray[i];
+			char c2 = expressionArray[i+1];
+			if(( c1 == '/' || c1 == '+' || c1 == '-' || c1 == '*' || c1 == 'r' || c1 == '^') && 
+			   ( c2 == '/' || c2 == '+' || c2 == '-' || c2 == '*' || c2 == 'r' || c2 == '^')){
+				throw new IllegalArgumentException("Invalid operator in expression");
+			}
+		}
 	}
 	
 	public void checkForInvalidCharacters(String expression, String variable){
