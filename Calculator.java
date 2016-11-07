@@ -95,11 +95,12 @@ public class Calculator implements ActionListener {
 			
 			/* Checking validity of argument */
 			expressionsNotEmpty(originalExpression);
+			checkForInvalidCharacters(originalExpression);
 			
 			 // ***** Should also remove extra spaces within this function & throw invalid - unary exception ****
 			// I feel like this makes sense because you're already checking for invalid spaces between the - unary and its number
 			expression = addUnary(expression);
-			
+		
 			checkForPositiveUnary(expression);
 			parenthesesCheck(expression);
 			expressionOperatorsValid(expression);
@@ -566,6 +567,18 @@ public class Calculator implements ActionListener {
 		
 	}
 	
+	public void checkForInvalidCharacters(String expression){
+		char [] expressionArray = expression.toCharArray();
+		for(int i = 0; i < expressionArray.length ; i++){
+			char c = expressionArray[i];
+			if(!(c == '1' || c == '2' || c == '3' || c == '4' || c == '5' || c == '6' || c == '7' || c == '8' || c == '9' || c == '0' ||
+				 c == '/' || c == '+' || c == '-' || c == '*' || c == 'r' || c == '^' || c == '(' || c == ')' || c == 'n' || c == 'x' || 
+				 ((c == 'p') && (expressionArray[i+1] == 'i')) || c == 'e' || c == ' ')) {
+				throw new IllegalArgumentException("Invalid operator or character in expression.");
+			}
+		}
+		
+	}
 	
 	//	Removes blanks/spaces from expression
 	public String removeBlanks(String expression){
