@@ -440,16 +440,19 @@ public class Calculator implements ActionListener {
 				if (expressionArray[i] == ')'){
 					rightParenCount++;
 				}
+				if (rightParenCount > leftParenCount){
+					throw new IllegalArgumentException("Invalid Parentheses operator");
+				}
 			}
 			
 			if (leftParenCount!=rightParenCount){
-				throw new IllegalArgumentException("Invalid parentheses operator.");
+				throw new IllegalArgumentException("Invalid Parentheses operator");
 			}
 			if (expression.indexOf('(') > expression.indexOf(')')){
-				throw new IllegalArgumentException("Invalid parentheses operator.");
+				throw new IllegalArgumentException("Invalid Parentheses operator");
 			}
 			if (expression.lastIndexOf('(') > expression.lastIndexOf(')')){
-				throw new IllegalArgumentException("Invalid parentheses operator.");
+				throw new IllegalArgumentException("Invalid Parentheses operator");
 			}
 			
 	}
