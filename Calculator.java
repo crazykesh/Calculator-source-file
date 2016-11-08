@@ -435,16 +435,20 @@ public class Calculator implements ActionListener {
 			for(int i = 0; i < expressionArray.length; i++){
 				if (expressionArray[i] == '('){
 					leftParenCount++;
-					if (!(expressionArray[i-1] != '*') || (expressionArray[i-1] != '/') || (expressionArray[i-1] != '+') ||
-					(expressionArray[i-1] != '-') || (expressionArray[i-1] != 'r') || (expressionArray[i-1] != '^')){
-						throw new IllegalArgumentException("Implicit Multiplication is not allowed");
+					if ((i) != 0){
+						if (!((expressionArray[i-1] == '*') || (expressionArray[i-1] == '/') || (expressionArray[i-1] == '+') ||
+						(expressionArray[i-1] == '-') || (expressionArray[i-1] == 'r') || (expressionArray[i-1] == '^') || (expressionArray[i-1] == '('))){
+							throw new IllegalArgumentException("Implicit Multiplication is not allowed");
+						}
 					}
 				}
 				if (expressionArray[i] == ')'){
 					rightParenCount++;
-					if (!(expressionArray[i+1] != '*') || (expressionArray[i+1] != '/') || (expressionArray[i+1] != '+') ||
-					(expressionArray[i+1] != '-') || (expressionArray[i+1] != 'r') || (expressionArray[i+1] != '^')){
-						throw new IllegalArgumentException("Implicit Multiplication is not allowed");
+					if (i != expressionArray.length-1){
+						if (!((expressionArray[i+1] == '*') || (expressionArray[i+1] == '/') || (expressionArray[i+1] == '+') ||
+						(expressionArray[i+1] == '-') || (expressionArray[i+1] == 'r') || (expressionArray[i+1] == '^') || (expressionArray[i+1] == ')'))){
+							throw new IllegalArgumentException("Implicit Multiplication is not allowed");
+						}
 					}
 				}
 				if (rightParenCount > leftParenCount){
