@@ -94,7 +94,6 @@ public class Calculator implements ActionListener {
 			String originalExpression = inputField.getText().trim().toLowerCase();
 			String variable = variableField.getText().trim();
 			
-			originalExpression = originalExpression.replaceAll("=", "");
 			inputField.setText(originalExpression);
 			
 			
